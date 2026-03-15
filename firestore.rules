@@ -1,0 +1,63 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Replace with your 2 actual Gmail addresses:
+    function isAllowedUser() {
+      return request.auth != null &&
+        (request.auth.token.email == "tomi.ebik@gmail.com" ||
+         request.auth.token.email == "USER_2@gmail.com");
+    }
+
+    // ── toolTypes ────────────────────────────────────────────────
+    match /toolTypes/{typeId} {
+      allow read: if isAllowedUser();
+      allow create: if isAllowedUser()
+        && request.resource.data.keys().hasAll(['name', 'revisionIntervalMonths',
+           'checkFields', 'parts', 'createdAt', 'updatedAt'])
+        && request.resource.data.revisionIntervalMonths is int
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0;
+      allow update: if isAllowedUser();
+      allow delete: if isAllowedUser();
+    }
+
+    // ── tools ────────────────────────────────────────────────────
+    match /tools/{toolId} {
+      allow read: if isAllowedUser();
+      allow create: if isAllowedUser()
+        && request.resource.data.keys().hasAll(['toolTypeId', 'toolTypeName',
+           'identifier', 'serialNumber', 'model', 'yearOfManufacture',
+           'status', 'createdAt', 'updatedAt'])
+        && request.resource.data.status in ['ok', 'due_soon', 'overdue', 'never_revised'];
+      allow update: if isAllowedUser();
+      allow delete: if isAllowedUser();
+    }
+
+    // ── revisions ────────────────────────────────────────────────
+    match /revisions/{revisionId} {
+      allow read: if isAllowedUser();
+      allow create: if isAllowedUser()
+        && request.resource.data.keys().hasAll(['toolId', 'toolTypeId',
+           'revisionDate', 'technicianName', 'overallResult',
+           'checkResults', 'partsResults', 'createdBy', 'createdAt'])
+        && request.resource.data.overallResult in ['splňuje', 'nesplňuje']
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if false; // Revisions are immutable
+      allow delete: if isAllowedUser();
+    }
+
+    // ── users ────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if isAllowedUser();
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && isAllowedUser();
+    }
+
+    // ── Deny everything else ─────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

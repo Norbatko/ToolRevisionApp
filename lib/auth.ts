@@ -2,17 +2,13 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut as firebaseSignOut,
+  User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-const ALLOWED_EMAILS = [
-  process.env.NEXT_PUBLIC_ALLOWED_EMAIL_1,
-  process.env.NEXT_PUBLIC_ALLOWED_EMAIL_2,
-].filter(Boolean) as string[];
-
-export function isAllowedEmail(email: string | null | undefined): boolean {
-  if (!email) return false;
-  return ALLOWED_EMAILS.includes(email.toLowerCase());
+export async function isAllowedUser(user: User): Promise<boolean> {
+  const tokenResult = await user.getIdTokenResult();
+  return tokenResult.claims.allowed === true;
 }
 
 export async function signInWithGoogle(): Promise<void> {

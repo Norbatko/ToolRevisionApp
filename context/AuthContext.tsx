@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { isAllowedEmail, signOut } from "@/lib/auth";
+import { isAllowedUser, signOut } from "@/lib/auth";
 import { upsertUser } from "@/lib/firestore";
 
 interface AuthContextValue {
@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        if (!isAllowedEmail(firebaseUser.email)) {
+        if (!await isAllowedUser(firebaseUser)) {
           // Not in allowlist — sign them out immediately
           await signOut();
           setError(

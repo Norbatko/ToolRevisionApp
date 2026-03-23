@@ -27,43 +27,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        let allowed = await isAllowedUser(firebaseUser);
+      try {
+        if (firebaseUser) {
+          let allowed = await isAllowedUser(firebaseUser);
 
-        if (!allowed) {
-          // No claim yet — try auto-granting via allowlist
-          const idToken = await firebaseUser.getIdToken();
-          const res = await fetch("/api/auth/grant", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ idToken }),
-          });
-          if (res.ok) {
-            // Force token refresh so the new claim is included
-            allowed = await isAllowedUser(firebaseUser, true);
+          if (!allowed) {
+            // No claim yet — try auto-granting via allowlist
+            const idToken = await firebaseUser.getIdToken();
+            const res = await fetch("/api/auth/grant", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ idToken }),
+            });
+            if (res.ok) {
+              // Force token refresh so the new claim is included
+              allowed = await isAllowedUser(firebaseUser, true);
+            }
           }
-        }
 
-        if (!allowed) {
-          await signOut();
-          setError(
-            "Přístup odepřen. Váš Google účet nemá oprávnění k přístupu do této aplikace."
-          );
-          setUser(null);
+          if (!allowed) {
+            await signOut();
+            setError(
+              "Přístup odepřen. Váš Google účet nemá oprávnění k přístupu do této aplikace."
+            );
+            setUser(null);
+          } else {
+            // Valid user — persist to Firestore
+            await upsertUser({
+              id: firebaseUser.uid,
+              email: firebaseUser.email!,
+              displayName: firebaseUser.displayName ?? firebaseUser.email!,
+            });
+            setUser(firebaseUser);
+            setError(null);
+          }
         } else {
-          // Valid user — persist to Firestore
-          await upsertUser({
-            id: firebaseUser.uid,
-            email: firebaseUser.email!,
-            displayName: firebaseUser.displayName ?? firebaseUser.email!,
-          });
-          setUser(firebaseUser);
-          setError(null);
+          setUser(null);
         }
-      } else {
+      } catch (err) {
+        console.error("Auth error:", err);
+        await signOut().catch(() => {});
+        setError("Nastala chyba při přihlášení. Zkuste to prosím znovu.");
         setUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return unsubscribe;

@@ -22,6 +22,19 @@ export async function POST(req: NextRequest) {
 
     // Grant the claim
     await adminAuth.setCustomUserClaims(uid, { allowed: true });
+
+    // Create Firestore user record via Admin SDK (bypasses rules — client token not refreshed yet)
+    const userRef = adminDb.collection("users").doc(uid);
+    const userSnap = await userRef.get();
+    if (!userSnap.exists) {
+      await userRef.set({
+        id: uid,
+        email,
+        displayName: decoded.name ?? email,
+        createdAt: new Date(),
+      });
+    }
+
     return NextResponse.json({ granted: true });
   } catch {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });

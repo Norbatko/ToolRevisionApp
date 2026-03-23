@@ -30,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         if (firebaseUser) {
           let allowed = await isAllowedUser(firebaseUser);
+          let justGranted = false;
 
           if (!allowed) {
             // No claim yet — try auto-granting via allowlist
@@ -40,6 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               body: JSON.stringify({ idToken }),
             });
             if (res.ok) {
+              justGranted = true;
               // Force token refresh so the new claim is included
               allowed = await isAllowedUser(firebaseUser, true);
             }
@@ -52,12 +54,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             setUser(null);
           } else {
-            // Valid user — persist to Firestore
-            await upsertUser({
-              id: firebaseUser.uid,
-              email: firebaseUser.email!,
-              displayName: firebaseUser.displayName ?? firebaseUser.email!,
-            });
+            // Persist to Firestore — skip if API route already created the record
+            if (!justGranted) {
+              await upsertUser({
+                id: firebaseUser.uid,
+                email: firebaseUser.email!,
+                displayName: firebaseUser.displayName ?? firebaseUser.email!,
+              });
+            }
             setUser(firebaseUser);
             setError(null);
           }

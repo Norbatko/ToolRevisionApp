@@ -28,8 +28,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        if (!await isAllowedUser(firebaseUser)) {
-          // Not in allowlist — sign them out immediately
+        let allowed = await isAllowedUser(firebaseUser);
+
+        if (!allowed) {
+          // No claim yet — try auto-granting via allowlist
+          const idToken = await firebaseUser.getIdToken();
+          const res = await fetch("/api/auth/grant", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+          });
+          if (res.ok) {
+            // Force token refresh so the new claim is included
+            await firebaseUser.getIdToken(true);
+            allowed = await isAllowedUser(firebaseUser);
+          }
+        }
+
+        if (!allowed) {
           await signOut();
           setError(
             "Přístup odepřen. Váš Google účet nemá oprávnění k přístupu do této aplikace."

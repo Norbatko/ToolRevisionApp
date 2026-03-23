@@ -38,6 +38,16 @@ async function main() {
     // User exists — set/clear claim directly
     await admin.auth().setCustomUserClaims(user.uid, revoking ? {} : { allowed: true });
     console.log(revoking ? `Claim removed for ${email}` : `Claim granted to ${email}`);
+
+    if (revoking) {
+      // Invalidate all active sessions immediately (no waiting for JWT expiry)
+      await admin.auth().revokeRefreshTokens(user.uid);
+      console.log(`Active sessions invalidated for ${email}`);
+
+      // Delete Firestore user record so they start fresh if re-granted later
+      await admin.firestore().collection("users").doc(user.uid).delete();
+      console.log(`User record deleted for ${email}`);
+    }
   }
 
   // Also update Firestore allowlist (covers the "never signed in" case)

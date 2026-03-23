@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
     const { idToken } = await req.json();
     if (!idToken) return NextResponse.json({ error: "Missing token" }, { status: 400 });
 
-    const decoded = await adminAuth.verifyIdToken(idToken);
+    const decoded = await adminAuth.verifyIdToken(idToken, true); // true = check revocation
     const { uid, email } = decoded;
 
     if (!email) return NextResponse.json({ error: "No email on account" }, { status: 400 });

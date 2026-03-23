@@ -40,8 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           });
           if (res.ok) {
             // Force token refresh so the new claim is included
-            await firebaseUser.getIdToken(true);
-            allowed = await isAllowedUser(firebaseUser);
+            allowed = await isAllowedUser(firebaseUser, true);
           }
         }
 

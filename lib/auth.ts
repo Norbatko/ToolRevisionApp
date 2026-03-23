@@ -6,8 +6,8 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 
-export async function isAllowedUser(user: User): Promise<boolean> {
-  const tokenResult = await user.getIdTokenResult();
+export async function isAllowedUser(user: User, forceRefresh = false): Promise<boolean> {
+  const tokenResult = await user.getIdTokenResult(forceRefresh);
   return tokenResult.claims.allowed === true;
 }
 

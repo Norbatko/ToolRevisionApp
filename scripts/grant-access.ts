@@ -40,13 +40,13 @@ async function main() {
     console.log(revoking ? `Claim removed for ${email}` : `Claim granted to ${email}`);
 
     if (revoking) {
-      // Invalidate all active sessions immediately (no waiting for JWT expiry)
-      await admin.auth().revokeRefreshTokens(user.uid);
-      console.log(`Active sessions invalidated for ${email}`);
-
-      // Delete Firestore user record so they start fresh if re-granted later
+      // Delete Firestore user record
       await admin.firestore().collection("users").doc(user.uid).delete();
       console.log(`User record deleted for ${email}`);
+
+      // Delete Firebase Auth user entirely — next sign-in will create a fresh account
+      await admin.auth().deleteUser(user.uid);
+      console.log(`Auth account deleted for ${email}`);
     }
   }
 

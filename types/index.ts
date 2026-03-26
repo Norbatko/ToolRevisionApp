@@ -47,12 +47,22 @@ export interface LastNotificationSentAt {
   due_soon_30?: Timestamp;
 }
 
+// ── Station (fire station / základna) ────────────────────────────────────────
+
+export interface Station {
+  id: string;
+  name: string;
+  createdAt: Timestamp;
+}
+
 // ── Tool (individual physical tool) ──────────────────────────────────────────
 
 export interface Tool {
   id: string;
   toolTypeId: string;
   toolTypeName: string;
+  stationId?: string;
+  stationName?: string;
   identifier: string;
   serialNumber: string;
   model: string;

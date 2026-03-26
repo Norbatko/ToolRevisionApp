@@ -52,6 +52,11 @@ service cloud.firestore {
         && isAllowedUser();
     }
 
+    // ── stations ─────────────────────────────────────────────────
+    match /stations/{stationId} {
+      allow read, create, update, delete: if isAllowedUser();
+    }
+
     // ── Deny everything else ─────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

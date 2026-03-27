@@ -6,12 +6,14 @@ import { TopBar } from "@/components/layout/TopBar";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { ToolForm } from "@/components/tools/ToolForm";
 import { useToolTypes } from "@/hooks/useToolTypes";
+import { useStations } from "@/hooks/useStations";
 import { createTool } from "@/lib/firestore";
 import type { ToolInput } from "@/types";
 
 export default function NovyNastrojPage() {
   const router = useRouter();
   const { toolTypes, loading } = useToolTypes();
+  const { stations } = useStations();
 
   const handleSubmit = async (data: ToolInput) => {
     try {
@@ -36,6 +38,7 @@ export default function NovyNastrojPage() {
         ) : (
           <ToolForm
             toolTypes={toolTypes}
+            stations={stations}
             onSubmit={handleSubmit}
             submitLabel="Přidat nástroj"
           />

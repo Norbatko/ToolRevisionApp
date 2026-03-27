@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Wrench, Settings } from "lucide-react";
+import { LayoutDashboard, Wrench, Building2, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/dashboard", label: "Přehled", icon: LayoutDashboard },
   { href: "/nastroje", label: "Nástroje", icon: Wrench },
+  { href: "/zakladny", label: "Základny", icon: Building2 },
   { href: "/typy-nastroju", label: "Typy", icon: Settings },
 ];
 

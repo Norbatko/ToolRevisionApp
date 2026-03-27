@@ -13,10 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { ToolInput, ToolType } from "@/types";
+import type { ToolInput, ToolType, Station } from "@/types";
 
 const schema = z.object({
   toolTypeId: z.string().min(1, "Vyberte typ nástroje"),
+  stationId: z.string().optional(),
   identifier: z.string().min(1, "Zadejte označení nástroje"),
   serialNumber: z.string().min(1, "Zadejte sériové číslo"),
   model: z.string().min(1, "Zadejte model"),
@@ -30,6 +31,7 @@ type FormValues = z.infer<typeof schema>;
 
 interface ToolFormProps {
   toolTypes: ToolType[];
+  stations?: Station[];
   defaultValues?: Partial<FormValues>;
   onSubmit: (data: ToolInput) => Promise<void>;
   submitLabel?: string;
@@ -37,6 +39,7 @@ interface ToolFormProps {
 
 export function ToolForm({
   toolTypes,
+  stations = [],
   defaultValues,
   onSubmit,
   submitLabel = "Uložit",
@@ -53,12 +56,16 @@ export function ToolForm({
   });
 
   const selectedTypeId = watch("toolTypeId");
+  const selectedStationId = watch("stationId");
 
   const handleFormSubmit = async (values: FormValues) => {
     const toolType = toolTypes.find((t) => t.id === values.toolTypeId);
+    const station = stations.find((s) => s.id === values.stationId);
     await onSubmit({
       ...values,
       toolTypeName: toolType?.name ?? "",
+      stationId: station?.id,
+      stationName: station?.name,
     });
   };
 
@@ -86,6 +93,28 @@ export function ToolForm({
           <p className="text-xs text-red-500">{errors.toolTypeId.message}</p>
         )}
       </div>
+
+      {/* Station */}
+      {stations.length > 0 && (
+        <div className="space-y-1.5">
+          <Label>Základna</Label>
+          <Select
+            value={selectedStationId ?? ""}
+            onValueChange={(v) => setValue("stationId", v || undefined, { shouldValidate: true })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Vyberte základnu…" />
+            </SelectTrigger>
+            <SelectContent>
+              {stations.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
 
       {/* Identifier */}
       <div className="space-y-1.5">

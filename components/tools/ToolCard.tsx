@@ -21,6 +21,9 @@ export function ToolCard({ tool }: { tool: Tool }) {
             <p className="text-xs text-gray-500 truncate">
               {tool.toolTypeName} · {tool.model} · SN: {tool.serialNumber}
             </p>
+            {tool.stationName && (
+              <p className="text-xs text-blue-500 truncate">{tool.stationName}</p>
+            )}
             <p className="text-xs text-gray-400 mt-1">
               {tool.status === "never_revised"
                 ? "Zatím nerevidováno"

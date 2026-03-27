@@ -10,10 +10,12 @@ import { ToolFilterBar } from "@/components/tools/ToolFilterBar";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTools } from "@/hooks/useTools";
-import type { ToolStatus } from "@/types";
+import { useStations } from "@/hooks/useStations";
+import type { Tool, ToolStatus } from "@/types";
 
 export default function NastrojePage() {
   const { tools, loading } = useTools();
+  const { stations } = useStations();
   const [activeFilter, setActiveFilter] = useState<ToolStatus | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -34,6 +36,24 @@ export default function NastrojePage() {
     }
     return result;
   }, [tools, activeFilter, searchQuery]);
+
+  // Group tools by station when stations exist
+  const grouped = useMemo(() => {
+    if (stations.length === 0) return null;
+
+    const groups: { id: string | null; name: string; tools: Tool[] }[] = stations.map((s) => ({
+      id: s.id,
+      name: s.name,
+      tools: filtered.filter((t) => t.stationId === s.id),
+    }));
+
+    const unassigned = filtered.filter((t) => !t.stationId);
+    if (unassigned.length > 0) {
+      groups.push({ id: null, name: "Bez základny", tools: unassigned });
+    }
+
+    return groups.filter((g) => g.tools.length > 0);
+  }, [filtered, stations]);
 
   return (
     <>
@@ -69,6 +89,21 @@ export default function NastrojePage() {
                 ? "Zatím žádné nástroje. Přidejte první nástroj."
                 : "Žádné výsledky pro zadané filtry."}
             </p>
+          ) : grouped ? (
+            <div className="space-y-5">
+              {grouped.map((group) => (
+                <div key={group.id ?? "__unassigned"}>
+                  <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2 px-1">
+                    {group.name}
+                  </h2>
+                  <div className="space-y-2">
+                    {group.tools.map((tool) => (
+                      <ToolCard key={tool.id} tool={tool} />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           ) : (
             <div className="space-y-2">
               {filtered.map((tool) => (

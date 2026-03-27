@@ -18,7 +18,6 @@ import type { ToolInput, ToolType, Station } from "@/types";
 const schema = z.object({
   toolTypeId: z.string().min(1, "Vyberte typ nástroje"),
   stationId: z.string().optional(),
-  identifier: z.string().min(1, "Zadejte označení nástroje"),
   serialNumber: z.string().min(1, "Zadejte sériové číslo"),
   model: z.string().min(1, "Zadejte model"),
   yearOfManufacture: z
@@ -115,19 +114,6 @@ export function ToolForm({
           </Select>
         </div>
       )}
-
-      {/* Identifier */}
-      <div className="space-y-1.5">
-        <Label>Označení nástroje</Label>
-        <Input
-          {...register("identifier")}
-          placeholder="např. HS 1 Centrála"
-          className={errors.identifier ? "border-red-500" : ""}
-        />
-        {errors.identifier && (
-          <p className="text-xs text-red-500">{errors.identifier.message}</p>
-        )}
-      </div>
 
       {/* Serial number */}
       <div className="space-y-1.5">

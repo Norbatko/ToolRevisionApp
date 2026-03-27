@@ -63,7 +63,6 @@ export interface Tool {
   toolTypeName: string;
   stationId?: string;
   stationName?: string;
-  identifier: string;
   serialNumber: string;
   model: string;
   yearOfManufacture: number;

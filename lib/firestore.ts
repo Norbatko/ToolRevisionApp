@@ -17,6 +17,7 @@ import {
 import { db } from "@/lib/firebase";
 import { computeToolStatus, computeNextRevisionDate } from "@/lib/status";
 import type {
+  Station,
   ToolType,
   ToolTypeInput,
   Tool,
@@ -25,6 +26,59 @@ import type {
   RevisionInput,
   AppUser,
 } from "@/types";
+
+// ── Stations ──────────────────────────────────────────────────────────────────
+
+export async function getStations(): Promise<Station[]> {
+  const snap = await getDocs(
+    query(collection(db, "stations"), orderBy("name", "asc"))
+  );
+  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Station));
+}
+
+export async function createStation(name: string): Promise<string> {
+  const ref = await addDoc(collection(db, "stations"), {
+    name,
+    createdAt: serverTimestamp(),
+  });
+  return ref.id;
+}
+
+export async function updateStation(id: string, name: string): Promise<void> {
+  const batch = writeBatch(db);
+
+  batch.update(doc(db, "stations", id), { name });
+
+  // Denormalize station name to all tools in this station
+  const toolsSnap = await getDocs(
+    query(collection(db, "tools"), where("stationId", "==", id))
+  );
+  toolsSnap.docs.forEach((toolDoc) => {
+    batch.update(toolDoc.ref, { stationName: name, updatedAt: serverTimestamp() });
+  });
+
+  await batch.commit();
+}
+
+export async function deleteStation(id: string): Promise<void> {
+  const batch = writeBatch(db);
+
+  batch.delete(doc(db, "stations", id));
+
+  // Clear station assignment from all tools in this station
+  const toolsSnap = await getDocs(
+    query(collection(db, "tools"), where("stationId", "==", id))
+  );
+  toolsSnap.docs.forEach((toolDoc) => {
+    batch.update(toolDoc.ref, {
+      stationId: deleteField(),
+      stationName: deleteField(),
+      updatedAt: serverTimestamp(),
+    });
+  });
+
+  await batch.commit();
+}
 
 // ── Tool Types ────────────────────────────────────────────────────────────────
 

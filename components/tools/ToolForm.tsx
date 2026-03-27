@@ -54,8 +54,8 @@ export function ToolForm({
     defaultValues: { yearOfManufacture: new Date().getFullYear(), ...defaultValues },
   });
 
-  const selectedTypeId = watch("toolTypeId");
-  const selectedStationId = watch("stationId");
+  const selectedTypeId = watch("toolTypeId") ?? "";
+  const selectedStationId = watch("stationId") ?? "";
 
   const handleFormSubmit = async (values: FormValues) => {
     const toolType = toolTypes.find((t) => t.id === values.toolTypeId);

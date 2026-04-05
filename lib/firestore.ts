@@ -140,7 +140,7 @@ export async function deleteToolType(id: string): Promise<void> {
 
 export async function getTools(): Promise<Tool[]> {
   const snap = await getDocs(
-    query(collection(db, "tools"), orderBy("identifier", "asc"))
+    query(collection(db, "tools"), orderBy("serialNumber", "asc"))
   );
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Tool));
 }

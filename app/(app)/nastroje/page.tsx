@@ -28,7 +28,6 @@ export default function NastrojePage() {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (t) =>
-          t.identifier.toLowerCase().includes(q) ||
           t.model.toLowerCase().includes(q) ||
           t.serialNumber.toLowerCase().includes(q) ||
           t.toolTypeName.toLowerCase().includes(q)

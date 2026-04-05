@@ -17,7 +17,7 @@ export function useTools(statusFilter?: ToolStatus) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const constraints: QueryConstraint[] = [orderBy("identifier", "asc")];
+    const constraints: QueryConstraint[] = [orderBy("serialNumber", "asc")];
     if (statusFilter) {
       constraints.unshift(where("status", "==", statusFilter));
     }

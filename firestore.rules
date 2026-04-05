@@ -24,7 +24,7 @@ service cloud.firestore {
       allow read: if isAllowedUser();
       allow create: if isAllowedUser()
         && request.resource.data.keys().hasAll(['toolTypeId', 'toolTypeName',
-           'identifier', 'serialNumber', 'model', 'yearOfManufacture',
+           'serialNumber', 'model', 'yearOfManufacture',
            'status', 'createdAt', 'updatedAt'])
         && request.resource.data.status in ['ok', 'due_soon', 'overdue', 'never_revised'];
       allow update: if isAllowedUser();

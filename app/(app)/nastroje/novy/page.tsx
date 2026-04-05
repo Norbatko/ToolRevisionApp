@@ -19,7 +19,7 @@ export default function NovyNastrojPage() {
     try {
       const id = await createTool(data);
       toast.success("Nástroj byl přidán");
-      router.push(`/nastroje/${id}`);
+      router.replace(`/nastroje/${id}`);
     } catch {
       toast.error("Nepodařilo se uložit nástroj");
     }

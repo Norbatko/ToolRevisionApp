@@ -29,7 +29,9 @@ export function AttentionList({ tools }: AttentionListProps) {
   return (
     <div className="space-y-2">
       {attention.map((tool) => (
-        <ToolCard key={tool.id} tool={tool} />
+        <div key={tool.id} className="space-y-3">
+          <ToolCard key={tool.id} tool={tool} />
+        </div>
       ))}
     </div>
   );

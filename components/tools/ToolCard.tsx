@@ -15,7 +15,6 @@ export function ToolCard({ tool }: { tool: Tool }) {
         <div className="flex items-start gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <span className="font-semibold text-sm truncate">{tool.identifier}</span>
               <ToolStatusBadge status={tool.status} />
             </div>
             <p className="text-xs text-gray-500 truncate">

@@ -97,7 +97,9 @@ export default function NastrojePage() {
                   </h2>
                   <div className="space-y-2">
                     {group.tools.map((tool) => (
-                      <ToolCard key={tool.id} tool={tool} />
+                      <div key={tool.id} className="space-y-3">
+                        <ToolCard key={tool.id} tool={tool} />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -106,7 +108,9 @@ export default function NastrojePage() {
           ) : (
             <div className="space-y-2">
               {filtered.map((tool) => (
-                <ToolCard key={tool.id} tool={tool} />
+                <div key={tool.id} className="space-y-3">
+                  <ToolCard key={tool.id} tool={tool} />
+                </div>
               ))}
             </div>
           )}

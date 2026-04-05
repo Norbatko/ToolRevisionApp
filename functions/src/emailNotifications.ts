@@ -39,7 +39,6 @@ function shouldSendNotification(
 }
 
 function buildEmailHtml(
-  toolIdentifier: string,
   toolModel: string,
   toolSerial: string,
   notifType: NotificationType,
@@ -66,7 +65,6 @@ function buildEmailHtml(
       <p style="color:#6b7280;font-size:14px;margin-top:0;">Automatické upozornění</p>
 
       <div style="background:#f3f4f6;border-radius:8px;padding:16px;margin:16px 0;">
-        <p style="margin:0 0 8px;font-size:16px;font-weight:600;">${toolIdentifier}</p>
         <p style="margin:0 0 4px;color:#374151;font-size:14px;">Model: ${toolModel}</p>
         <p style="margin:0 0 4px;color:#374151;font-size:14px;">Sériové číslo: ${toolSerial}</p>
         <p style="margin:0;color:#374151;font-size:14px;">Datum příští revize: <strong>${dateStr}</strong></p>
@@ -134,20 +132,19 @@ export async function runDailyCheck(): Promise<void> {
     // Check throttle
     const lastSentAt = tool.lastNotificationSentAt?.[notifType] as admin.firestore.Timestamp | undefined;
     if (!shouldSendNotification(notifType, lastSentAt, today)) {
-      console.log(`Skipping ${tool.identifier} (${notifType}) — already notified`);
+      console.log(`Skipping ${tool.serialNumber} (${notifType}) — already notified`);
       continue;
     }
 
     // Build email
     const subject =
       notifType === "overdue"
-        ? `UPOZORNĚNÍ: Revize po termínu – ${tool.identifier}`
+        ? `UPOZORNĚNÍ: Revize po termínu – ${tool.serialNumber}`
         : notifType === "due_soon_7"
-        ? `Připomínka: Revize za 7 dní – ${tool.identifier}`
-        : `Připomínka: Revize za 30 dní – ${tool.identifier}`;
+        ? `Připomínka: Revize za 7 dní – ${tool.serialNumber}`
+        : `Připomínka: Revize za 30 dní – ${tool.serialNumber}`;
 
     const html = buildEmailHtml(
-      tool.identifier,
       tool.model,
       tool.serialNumber,
       notifType,
@@ -174,9 +171,9 @@ export async function runDailyCheck(): Promise<void> {
       });
 
       sentCount++;
-      console.log(`Sent ${notifType} notification for ${tool.identifier}`);
+      console.log(`Sent ${notifType} notification for ${tool.serialNumber}`);
     } catch (err) {
-      console.error(`Failed to send email for ${tool.identifier}:`, err);
+      console.error(`Failed to send email for ${tool.serialNumber}:`, err);
     }
   }
 

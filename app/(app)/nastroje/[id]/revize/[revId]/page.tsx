@@ -68,7 +68,7 @@ export default function RevizeDetailPage({
             <div className="flex items-center justify-between print:hidden">
               <div>
                 <p className="text-xs text-gray-400">Nástroj</p>
-                <p className="font-semibold">{tool.identifier}</p>
+                <p className="font-semibold">{tool.serialNumber}</p>
               </div>
               <Badge
                 variant="outline"

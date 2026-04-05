@@ -22,7 +22,7 @@ export function RevisionPrintView({ revision, tool, toolType }: RevisionPrintVie
           <p>E-Mail: {revision.technicianEmail}</p>
         </div>
         <div className="text-right text-xs border border-gray-400 p-2">
-          <p>{tool.identifier}</p>
+          <p>{tool.serialNumber}</p>
         </div>
       </div>
 

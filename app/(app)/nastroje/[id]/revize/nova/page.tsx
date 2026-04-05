@@ -48,7 +48,6 @@ export default function NovaRevizePage({
           <>
             {/* Tool info header */}
             <div className="mb-5 p-4 bg-blue-50 rounded-xl text-sm">
-              <p className="font-semibold">{tool.identifier}</p>
               <p className="text-gray-600 text-xs mt-0.5">
                 {toolType.name} · {tool.model} · SN: {tool.serialNumber}
               </p>

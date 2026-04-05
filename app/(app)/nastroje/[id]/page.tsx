@@ -70,7 +70,7 @@ export default function NastrojDetailPage({
   return (
     <>
       <TopBar
-        title={tool.identifier}
+        title={tool.serialNumber}
         showBack
         rightElement={
           <div className="flex gap-1">
@@ -91,7 +91,7 @@ export default function NastrojDetailPage({
           <Card className="p-4 space-y-3">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-bold text-base">{tool.identifier}</p>
+                <p className="font-bold text-base">{tool.serialNumber}</p>
                 <p className="text-sm text-gray-500 mt-0.5">{tool.toolTypeName}</p>
               </div>
               <ToolStatusBadge status={tool.status} />

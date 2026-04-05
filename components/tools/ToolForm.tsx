@@ -11,7 +11,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import type { ToolInput, ToolType, Station } from "@/types";
 
@@ -78,7 +77,11 @@ export function ToolForm({
           onValueChange={(v) => v && setValue("toolTypeId", v, { shouldValidate: true })}
         >
           <SelectTrigger className={errors.toolTypeId ? "border-red-500" : ""}>
-            <SelectValue placeholder="Vyberte typ…" />
+            <span data-slot="select-value" className="flex flex-1 text-left text-sm">
+              {selectedTypeId
+                ? toolTypes.find((t) => t.id === selectedTypeId)?.name
+                : <span className="text-muted-foreground">Vyberte typ…</span>}
+            </span>
           </SelectTrigger>
           <SelectContent>
             {toolTypes.map((t) => (
@@ -102,7 +105,11 @@ export function ToolForm({
             onValueChange={(v) => setValue("stationId", v || undefined, { shouldValidate: true })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Vyberte základnu…" />
+              <span data-slot="select-value" className="flex flex-1 text-left text-sm">
+                {selectedStationId
+                  ? stations.find((s) => s.id === selectedStationId)?.name
+                  : <span className="text-muted-foreground">Vyberte základnu…</span>}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {stations.map((s) => (

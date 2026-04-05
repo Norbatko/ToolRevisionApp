@@ -4,7 +4,7 @@ import { use } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Calendar } from "lucide-react";
+import { Plus, Trash2, Calendar } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { PageWrapper } from "@/components/layout/PageWrapper";
 import { ToolStatusBadge } from "@/components/tools/ToolStatusBadge";

@@ -12,14 +12,6 @@
       "collectionGroup": "tools",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "identifier", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "tools",
-      "queryScope": "COLLECTION",
-      "fields": [
         { "fieldPath": "nextRevisionDate", "order": "ASCENDING" },
         { "fieldPath": "lastNotificationSentAt.overdue", "order": "ASCENDING" }
       ]
